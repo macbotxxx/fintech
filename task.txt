@@ -1,0 +1,7 @@
+create an app with the name articles
+... create a model for a blog article
+... make verbose name 
+... register the model class to the admin.py
+... make migrations and migrate 
+
+just 10 mins .....
