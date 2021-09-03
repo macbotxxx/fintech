@@ -31,5 +31,5 @@ def welcome (request):
     This is the contact us page for our fintech application.
     """
     
-    return render(request, 'pages/welcome.html')
+    return render(request, 'users_pages/index.html')
     
