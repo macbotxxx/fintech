@@ -1,0 +1,23 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <b> <h1>My Car Detail</h1> </b>
+    {%for i in all_cars %}
+    car name === {{i.car_name}} <br>
+    car Price tag === {{i.price_tag | intcomma}} <br>
+    car images === <img src="{{i.img1.url}}" alt="" srcset=""> <img src="{{i.img2.url}}" alt="" srcset=""> <img src="{{i.img3.url}}" alt="" srcset=""> <br> 
+
+    gear name === {{i.gear}} <br> 
+    color === {{i.color}} <br>
+    description === {{i.description}} <br>
+
+    {%endfor%}
+</body>
+</html>
