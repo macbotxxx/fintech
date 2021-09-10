@@ -9,6 +9,9 @@ urlpatterns = [
     path('welcome', views.welcome, name = 'welcome'),
     path('cars', views.all_cars, name='cars'),
     path('cars-details/<int:id>/', views.get_car_detail, name='cars-details'),
+    path('payment/', views.PaymentView.as_view(), name='payment'),
+
+    path ('success', views.success, name='success'),
 ]
 
 

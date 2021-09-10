@@ -1,40 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://checkout.flutterwave.com/v3.js"></script>
 
-    <title>Document</title>
+  <title>Document</title>
 </head>
 <body>
 
+    <script type="text/javascript">
+      var user = '{{request.user}}'
 
-    <div class="container-fluid">
-        <form>
-            <div class="form-group">
-              <label for="exampleInputEmail1">Email address</label>
-              <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">Password</label>
-              <input type="password" class="form-control" id="exampleInputPassword1">
-            </div>
-            <div class="form-group form-check">
-              <input type="checkbox" class="form-check-input" id="exampleCheck1">
-              <label class="form-check-label" for="exampleCheck1">Check me out</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </form>
-      </div>
-      
+      function getToken(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== ''){
+          const cookies = document.cookie.split(';');
+          for(let i = 0; i < cookies.length; i++){
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1 ) === (name + '=')){
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      const csrftoken = getToken('csrftoken');
 
+    </script>
+
+  <h1>Make Payment Online</h1>
+  <hr>
+
+  <form>
+   
+    <button type="button" onClick="makePayment()">Pay Now</button>
+  </form>
+
+
+  <script>
+    function makePayment() {
+      FlutterwaveCheckout({
+        public_key: "FLWPUBK_TEST-f7d9f9de817c51ba37355d7a70b8224f-X",
+        tx_ref: "RX1",
+        amount: 500,
+        currency: "NGN",
+        country: "NG",
+        payment_options: " ",
+        customer: {
+          email: "cornelius@gmail.com",
+          phone_number: "08102909304",
+          name: "Flutterwave Developers",
+        },
+        callback: function (data) { // specified callback function
+          
+          status = data.status
+          transref = data.flw_ref
+          amount = data.amount
+          currency = data.currency
+          console.log(status);
+          console.log(transref);
+          console.log(amount);
+          console.log(currency);
+
+          var url = '/payment/'
+          fetch(url , {
+            method: 'POST',
+            headers:{
+              'content-type':'application/json',
+              'X-CSRFTOKEN':csrftoken,
+            },
+
+            body:JSON.stringify({
+              'status':status,
+              'transref':transref,
+              'amount':amount,
+              'currency':currency,
+            })
     
+          })
+          .then ((response) => {
+              if (data.status == 'successful'){
+                console.log('working now')
+                window.location.replace('/success')
+              }
+              return response.json()
+            })
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
-
+        },
+        customizations: {
+          title: "My store",
+          description: "Payment for items in cart",
+          logo: "https://assets.piedpiper.com/logo.png",
+        },
+      });
+    }
+  </script>
+  
 </body>
 </html>
