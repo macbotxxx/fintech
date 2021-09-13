@@ -3,6 +3,7 @@ from django.views.generic.base import View
 from articles.models import Blog, My_Cars
 from django.contrib.auth.decorators import login_required
 from articles.forms import CarForm
+from balance.models import Transaction_history
 
 import json
 # Create your views here.
@@ -56,19 +57,30 @@ def get_car_detail (request, id):
 
 class PaymentView (View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'pages/welcome.html')
+        trans1 =Transaction_history.objects.all()
+        trans2 =Transaction_history.objects.filter(user_id = self.request.user)
 
-    def post (self,*args, **kwargs):
+        context = {
+            'trans1':trans1,
+            'trans2':trans2,
+        }
+        
+        return render(request, 'pages/welcome.html', context)
+
+    def post (self,request, *args, **kwargs):
         data = json.loads(self.request.body)
         status = data['status']
         transref = data['transref']
         amount = data['amount']
         currency = data['currency']
 
-        print('my-status', status)
-        print('my-transref', transref)
-        print('my-amount', amount)
-        print('my-currency', currency)
+        Transaction_history.objects.create(
+            user_id = self.request.user,
+            order_id = transref,
+            billing_name = 'Testing Class Payment',
+            amount = amount,
+            status = status,  
+            )
 
         return redirect('success')
 
@@ -79,6 +91,11 @@ def success(request):
 
 def my_cars (request):
     form = CarForm()
+
+    if request.method == 'POST':
+        form = CarForm(request.POST)
+        if form.is_valid():
+            form.save()
 
     context = {
         'form': form,
