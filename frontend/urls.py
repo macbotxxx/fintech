@@ -12,6 +12,7 @@ urlpatterns = [
     path('payment/', views.PaymentView.as_view(), name='payment'),
 
     path ('success', views.success, name='success'),
+    path ('form/', views.my_cars, name='my-cars'),
 ]
 
 

@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.views.generic.base import View
 from articles.models import Blog, My_Cars
 from django.contrib.auth.decorators import login_required
+from articles.forms import CarForm
 
 import json
 # Create your views here.
@@ -74,4 +75,14 @@ class PaymentView (View):
 def success(request):
 
     return render(request, 'pages/success.html')
+
+
+def my_cars (request):
+    form = CarForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'pages/welcome.html', context)
 
